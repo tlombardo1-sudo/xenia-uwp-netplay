@@ -1,0 +1,31 @@
+name: Build Xenia UWP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build UWP App
+      run: |
+        msbuild /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false /p:HasPackageAndPublishMenu=true /p:PackageOptional=false
+
+    - name: Upload Built Package Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Xenia-UWP-Build
+        path: |
+          **/*.appx
+          **/*.msix
+          **/*.msixbundle
+          
